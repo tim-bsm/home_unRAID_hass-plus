@@ -29,4 +29,4 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/home_unRAID_hass-plus:latest
+            ghcr.io/${{ github.repository_owner }}/hass-plus:latest
