@@ -2,7 +2,7 @@ name: Build Home Assistant Wrapper
 
 on:
   schedule:
-    - cron: "0 * * * *" # check hourly for updates
+    - cron: "0 2 * * *" # check daily at 02:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -10,7 +10,22 @@ permissions:
   packages: write
 
 jobs:
+  check-upstream:
+    runs-on: ubuntu-latest
+    outputs:
+      needs-updating: ${{ steps.check.outputs.needs-updating }}
+    steps:
+      - name: Check if base image was updated
+        id: check
+        uses: lucacome/docker-image-update-checker@v2.0.0
+        with:
+          base-image: ghcr.io/home-assistant/home-assistant:stable
+          image: ghcr.io/${{ github.repository_owner }}/hass-plus:latest
+          platforms: linux/amd64
+
   build:
+    needs: check-upstream
+    if: needs.check-upstream.outputs.needs-updating == 'true'
     runs-on: ubuntu-latest
 
     steps:
