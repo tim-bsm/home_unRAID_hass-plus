@@ -28,7 +28,7 @@ jobs:
         with:
           base-image: ghcr.io/home-assistant/home-assistant:stable
           image: ghcr.io/${{ github.repository_owner }}/hass-plus:latest
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
 
   build:
     needs: check-upstream
