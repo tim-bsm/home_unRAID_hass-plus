@@ -15,9 +15,16 @@ jobs:
     outputs:
       needs-updating: ${{ steps.check.outputs.needs-updating }}
     steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check if base image was updated
         id: check
-        uses: lucacome/docker-image-update-checker@v2.0.0
+        uses: lucacome/docker-image-update-checker@v3.0.1
         with:
           base-image: ghcr.io/home-assistant/home-assistant:stable
           image: ghcr.io/${{ github.repository_owner }}/hass-plus:latest
@@ -30,18 +37,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v6.0.1
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6.18.0
         with:
+          context: .
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/hass-plus:latest
+          platforms: linux/amd64,linux/arm64
